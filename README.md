@@ -1,25 +1,36 @@
-Cara mengimplementasikan checklist tugas 2:
-- Membuat sebuah proyek Django baru.
-        Dengan membuat direktori goals-n-glory, membuat dan mengaktifkan virtual environment melalui terminal direktori, menyiapkan dependencies ( dengan membuat dan mengisi file requirements.txt dengan dependencies), install dependencies melalui terminal, membuat project django dengan nama goals_n_glory melalui terminal, menambahkan file .env dan .env.prod dan mengisinya dengan konfigurasi, modifikasi file settings.py (menambahkan kode menggunakan env variables, menambahkan localhost ke allowed_hosts, konfigurasi production dan database), migrate database, run server django, push ke github dan pws.
-- Membuat aplikasi dengan nama main pada proyek tersebut.
-        Dengan menjalankan perintah di terminal direktori, menambahkan aplikasi "main" ke installed_apps di settings.py
-- Melakukan routing pada proyek agar dapat menjalankan aplikasi main.
-- Membuat model pada aplikasi main dengan nama Product dan memiliki atribut wajib sebagai berikut.
-name sebagai nama item dengan tipe CharField.
-price sebagai harga item dengan tipe IntegerField.
-description sebagai deskripsi item dengan tipe TextField.
-thumbnail sebagai gambar item dengan tipe URLField.
-category sebagai kategori item dengan tipe CharField.
-is_featured sebagai status unggulan item dengan tipe BooleanField.
-- Membuat sebuah fungsi pada views.py untuk dikembalikan ke dalam sebuah template HTML yang menampilkan nama aplikasi serta nama dan kelas kamu.
-- Membuat sebuah routing pada urls.py aplikasi main untuk memetakan fungsi yang telah dibuat pada views.py.
-- Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
+## Tugas Individu 2
+
+**PWS**: https://sahila-khairatul-goalsnglory.pbp.cs.ui.ac.id/
+
+### 1. Cara mengimplementasikan checklist tugas 2:
+- Membuat direktori utama goals-n-glory
+- Membuat dan mengaktifkan virtual environment
+- Menyiapkan dependencies di file `requirements.txt` dan install melalui terminal
+- Membuat project django dengan nama goals_n_glory melalui terminal
+- Membuat file `.env` dan `.env.prod` dan mengisinya dengan konfigurasi
+- Modifikasi file `settings.py`: menambahkan `load_dotenv()`, menambahkan localhost ke `ALLOWED_HOSTS`, konfigurasi production dan database
+- Migrate dan run server django
+- Membuat aplikasi `main` dengan `python manage.py startapp main`
+- Menambahkan 'main' ke `INSTALLED_APPS` di `settings.py`
+- Membuat model `Product` di `main/models.py`, dengan atribut: name, price, description, thumbnail, category, is_featured, brand, size, color, stock
+- Migrate model dengan `python manage.py makemigrations` dan `python manage.py migrate` melalui terminal
+- Membuat fungsi `show_main` di `main/views.py` dan mengisinya dengan dictionary berisi nama, npm, kelas, dan nama aplikasi untuk dikirimkan ke `main.html`
+- Membuat folder `templates` di `main`
+- Menambahkan file `main.html` dan mengisinya dengan yang ingin ditampilkan di web (nama, npm, kelas, dan nama aplikasi yang direturn oleh fungsi `show_main` di `main/views.py`)
+- Routing dengan membuat `urls.py` di `main` dan mengisinya dengan `path('', show_main, name="show_main")`
+- Menambahkan `path('', include('main.urls'))` di `goals_n_glory/urls.py`
+- Push ke github
+- Create new project di PWS, isi environs dengan kode dari `.env.prod`, tambahkan url deployment PWS pada `ALLOWED_HOSTS` di `settings.py`
+- Push ke PWS
+
+### 2. Bagan alur request-response dan kaitan antara urls.py, views.py, models.py, dan berkas html
 
 
-- Membuat sebuah README.md yang berisi tautan menuju aplikasi PWS yang sudah di-deploy, serta jawaban dari beberapa pertanyaan berikut.
-Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
-Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
-Jelaskan peran settings.py dalam proyek Django!
-Bagaimana cara kerja migrasi database di Django?
-Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
-Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
+### 3. Peran settings.py dalam proyek Django
+`settings.py` berperan sebagai pusat kontrol proyek Django yang memuat seluruh konfigurasi proyek, seperti menyimpan daftar aplikasi aktif, pengaturan database, middleware, template, static files, bahasa dan time zone, kunci keamanan, serta daftar allowed hosts.
+
+### 4. Cara kerja migrasi database di Django
+
+### 5. Mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
+
+### 6. Feedback untuk asisten dosen terkait tutorial 1
