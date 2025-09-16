@@ -19,7 +19,7 @@ class Product(models.Model):
     is_featured = models.BooleanField(default=False)
     brand = models.CharField(max_length=50)
     size = models.CharField(max_length=10, blank=True)
-    color = models.CharField(max_length=30, blank=True)
+    color = models.CharField(max_length=50, blank=True)
     stock = models.PositiveIntegerField(default=0)
 
     def __str__(self):
