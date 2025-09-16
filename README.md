@@ -24,7 +24,7 @@
 - Push ke PWS
 
 ### 2. Bagan alur request-response dan kaitan antara urls.py, views.py, models.py, dan berkas html
-![Bagan Alur MVT](bagan_MVT.png)
+![Bagan Alur MVT](readme_images/bagan_MVT.png)
 Referensi: https://medium.com/@AyushAgrawal_/understanding-django-mvt-architecture-and-view-functions-django-full-course-for-beginners-lesson-39c8da093b44
 
 - User mengirim request ke django melalui browser, misalnya mengakses URL (HTTP request)
@@ -47,4 +47,40 @@ Referensi: https://medium.com/@AyushAgrawal_/understanding-django-mvt-architectu
 Karena Django python-based, yang di mana python dikenal dengan readabilitynya dan cenderung mudah untuk dipahami. Selain itu, Django sudah memiliki banyak built-in features, sehingga tidak perlu banyak set-up dan bisa langsung fokus ke pembuatan web.
 
 ### 6. Feedback untuk asisten dosen terkait tutorial 1
-Asdos sangat responsif dan solutif ketika sesi tutorial, serta penjelasan dalam tutorial 1 membantu saya memahami apa yang sedang saya lakukan. Sebagai masukan, mungkin ke depannya bisa ditambahkan note step mana saja yang krusial dan yang boleh di skip ketika hanya melakukan perubahan pada project (sudah bukan inisisasi awal lagi).
+Asdos sangat responsif dan solutif ketika sesi tutorial, serta penjelasan dalam tutorial 1 membantu saya memahami apa yang sedang saya lakukan. Sebagai masukan, mungkin ke depannya bisa ditambahkan note step mana saja yang krusial dan yang boleh di skip ketika hanya melakukan perubahan pada project (sudah bukan inisiasi awal lagi).
+
+
+## Tugas Individu 3
+
+### 1. Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Karena informasi yang tersimpan di server harus dapat disalurkan ke pengguna atau sistem lain lewat format standar seperti JSON atau XML, tidak berhenti di server saja. Data delivery memastikan data dapat diakses, ditampilkan, dan digunakan oleh pihak yang membutuhkan.
+
+### 2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+JSON lebih sederhana, lebih human-readable, dan cepat diproses dibandingkan XML. JSON juga fleksibel, mendukung struktur data yang kompleks, dan dapat digunakan di berbagai bahasa pemrograman, sehingga sering digunakan di web modern. XML sebenarnya memiliki kelebihan di validasi data yang ketat, tetapi formatnya lebih panjang dan kompleks. Karena itulah JSON lebih populer dibandingkan XML.
+
+### 3. Fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut
+Method `is_valid()` mengecek apakah data yang dikirim melalui form sesuai aturan validasi (seperti tipe data, field wajib, panjang teks, dll). Kalau valid, hasilnya True dan data bisa diakses lewat `form.cleaned_data`. Kalau tidak, hasilnya False dan error akan tersimpan di `form.errors`. Method ini mencegah data tidak valid masuk ke database.
+
+### 4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+`csrf_token` mencegah serangan Cross-Site Request Forgery (CSFR), yaitu ketika penyerang membuat user tanpa sadar mengirim request lewat website palsu. Tanpa token ini, Django tidak bisa membedakan request asli dan palsu, sehingga penyerang bisa memanfaatkan sesi login user untuk mengirim form berbahaya. Django membedakan request asli atau palsu dengan mencocokkan `csrf_token` unik yang dikirim bersama form dengan token yang disimpan di server.
+
+### 5. Cara mengimplementasikan checklist tugas 3
+- Membuat `forms.py` di `main/` berisi `ProductForm` berbasis `ModelForm` untuk input data `Product`, dengan field sesuai atribut `Product`.
+- Menambahkan fungsi di `main/views.py`: `show_main` yang mengambil semua objek Product dan menampilkannya di halaman utama, `add_product` yang menampilkan dan memproses form untuk tambah Product baru, dan `show_product` yang menampilkan detail produk berdasarkan ID.
+- Menambahkan URL routing di `main/urls.py` untuk `add_product` dan `show_product`.
+- Memodifikasi `main.html` agar menampilkan daftar produk, tombol Add Product, dan link detail tiap produk.
+- Membuat file html baru di `main/templates/`: `add_product.html` untuk halaman form tambah produk dan `product_detail.html` untuk halaman detail produk.
+- Menambahkan URL deployment PWS ke `CSRF_TRUSTED_ORIGINS` di `settings.py`
+- Menambahkan fungsi `show_xml` dan `show_json` di `main/views.py` untuk mengembalikan data dalam format XML dan JSON.
+- Menambahkan routing `/xml/` dan `/json/` di `main/urls.py`.
+- Menambahkan fungsi `show_xml_by_id` dan `show_json_by_id` di `main/views.py` untuk mengembalikan data berdasarkan ID produk.
+- Menambahkan routing `/xml/<str:product_id>/` dan `/json/<str:product_id>/` di `main/urls.py`
+
+### 6. Feedback untuk asisten dosen terkait tutorial 2
+Tidak ada. Penjelasan di tutorial 2 sudah cukup membantu dalam pengerjaan tugas 2.
+
+### Hasil akses URL pada Postman
+![Hasil Postman URL XML](readme_images/postman_XML.png)
+![Hasil Postman URL JSON](readme_images/postman_JSON.png)
+![Hasil Postman URL XML by ID](readme_images/postman_XMLbyID.png)
+![Hasil Postman URL JSON by ID](readme_images/postman_JSONbyID.png)
