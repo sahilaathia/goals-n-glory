@@ -50,6 +50,7 @@ Karena Django python-based, yang di mana python dikenal dengan readabilitynya da
 Asdos sangat responsif dan solutif ketika sesi tutorial, serta penjelasan dalam tutorial 1 membantu saya memahami apa yang sedang saya lakukan. Sebagai masukan, mungkin ke depannya bisa ditambahkan note step mana saja yang krusial dan yang boleh di skip ketika hanya melakukan perubahan pada project (sudah bukan inisiasi awal lagi).
 
 
+
 ## Tugas Individu 3
 
 ### 1. Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
@@ -77,10 +78,19 @@ Method `is_valid()` mengecek apakah data yang dikirim melalui form sesuai aturan
 - Menambahkan routing `/xml/<str:product_id>/` dan `/json/<str:product_id>/` di `main/urls.py`
 
 ### 6. Feedback untuk asisten dosen terkait tutorial 2
-Tidak ada. Penjelasan di tutorial 2 sudah cukup membantu dalam pengerjaan tugas 2.
+Tidak ada. Penjelasan di tutorial 2 sudah cukup membantu dalam pengerjaan tugas 3.
 
 ### Hasil akses URL pada Postman
 ![Hasil Postman URL XML](readme_images/postman_XML.png)
 ![Hasil Postman URL JSON](readme_images/postman_JSON.png)
 ![Hasil Postman URL XML by ID](readme_images/postman_XMLbyID.png)
 ![Hasil Postman URL JSON by ID](readme_images/postman_JSONbyID.png)
+
+
+## Tugas 4
+
+### 1.  Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+### 2. Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+### 3. Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+### 4. Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+### 5. Step-by-step implementasi checklist tugas 4:
