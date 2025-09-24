@@ -30,9 +30,9 @@
 <p>{{ product.description }}</p>
 
 {% if product.user %}
-    <p>Seller: {{ product.user.username }}</p>
+    <p>Seller: <strong>{{ product.user.username }}</strong></p>
 {% else %}
-    <p>Seller: Anonymous</p>
+    <p>Seller: <strong>Anonymous</strong></p>
 {% endif %}
 
 {% endblock content %}
