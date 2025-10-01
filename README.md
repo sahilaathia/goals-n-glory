@@ -118,3 +118,16 @@ Penggunaan cookies tidak otomatis aman sepenuhnya, karena dapat dicuri, dimanipu
 - Menambahkan tombol filter All Articles dan My Articles di `main.html`.
 - Menampilkan username pembuat product di `product_detail.html`.
 - Membuat 2 akun user dengan masing-masing 3 dummy product di lokal.
+
+
+## Tugas 5
+
+### 1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+
+### 2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+
+### 3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+
+### 4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+
+### 5. Step-by-step implementasi checklist tugas 5

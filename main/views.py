@@ -22,7 +22,7 @@ def show_main(request):
 
     context = {
         'app_name' : 'Goals n\' Glory',
-        'name': 'Sahila Khairatul Athia',
+        'name': request.user.username,
         'npm' : '2406495716',
         'class': 'PBP B',
         'product_list': product_list,
@@ -112,3 +112,22 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form,
+        'product': product
+    }
+
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
