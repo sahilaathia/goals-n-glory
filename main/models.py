@@ -13,7 +13,7 @@ class Product(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    price = models.IntegerField(default=0)
+    price = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True, null=True)
     thumbnail = models.URLField()
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)

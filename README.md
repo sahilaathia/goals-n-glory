@@ -123,11 +123,82 @@ Penggunaan cookies tidak otomatis aman sepenuhnya, karena dapat dicuri, dimanipu
 ## Tugas 5
 
 ### 1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+Prioritas CSS selector ditentukan oleh spesifisitas, dengan urutan dari tertinggi ke terendah:
+- Inline Styles (CSS langsung di atribut style elemen) - spesifisitas tertinggi
+- ID Selectors (#id)
+- Classes, Attribute Selectors, dan Pseudo-classes (.class, [type="text"], :hover)
+- Elements dan Pseudo-elements (div, p, ::before)
+- Universal Selectors (*) - spesifisitas terendah
+
+Aturan:
+- Jika beberapa selector memiliki spesifisitas sama dan menargetkan elemen yang sama, yang ditulis terakhir akan diterapkan.
+- Selector dengan spesifisitas lebih tinggi akan mengoverride selector yang lebih rendah.
 
 ### 2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+Mengapa penting?
+- Efisiensi Pengembangan: Satu base code untuk semua perangkat, menghemat waktu dan biaya pengembangan serta pemeliharaan.
+- User Experience Optimal: Tampilan konsisten dan nyaman di semua ukuran layar, meningkatkan kepuasan user.
+- Aksesibilitas Universal: Pengguna dapat mengakses dari perangkat apapun tanpa hambatan navigasi.
+
+Contoh aplikasi yang sudah menerapkan: [Youtube](https://www.youtube.com/)
+- Layout homepage berubah dari menampilkan 3 kolom (desktop) menjadi 1 kolom (mobile).
+- Teks dan gambar menyesuaikan ukuran layar secara proporsional.
+- Navigasi berubah menjadi menu hamburger di mobile.
+
+Contoh aplikasi yang belum menerapkan: [Deque University Website](https://dequeuniversity.com/library/responsive/1-non-responsive)
+- Teks dan gambar terpotong pada layar kecil.
+- Layout tetap sama meskipun ukuran layar mengecil.
+- Sulit dinavigasi karena tidak ada penyesuaian untuk mobile mode.
 
 ### 3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+Urutan dari terluar: Margin -> Border -> Padding.
+![Visualisasi Urutan Margin Border Padding](readme_images/MarginBorderPadding.png)
+- Margin: Ruang transparan di luar elemen yang mengatur jarak dengan elemen lain agar rapi
+- Border: Garis pembatas yang membungkus konten dan padding
+- Padding: Ruang transparan di dalam elemen, antara konten dan border, yang memberi "ruang nafas" pada konten agar tidak sempit
+
+Cara mengimplentasikan:
+```
+.contoh {
+    /* Padding */
+    padding: 30px; /* semua sisi */
+    padding: 20px 25px; /* vertikal horizontal */
+    padding-top: 20px; /* sisi spesifik (top) */
+    
+    /* Border */
+    border: 3px solid #333; /* ketebalan, style, warna */
+    border-bottom: 5px dotted red; /* sisi spesifik (bottom) */
+    
+    /* Margin */
+    margin: 30px; /* semua sisi */
+    margin: 0 auto; /* center elemen */
+    margin-left: 25px; /* sisi spesifik (left) */
+}
+```
 
 ### 4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+Flexbox (layout 1 dimensi):
+- Mengatur elemen dalam satu arah, horizontal (baris) ATAU vertikal (kolom)
+- Komponen: Flex container (parent) dan flex items (children)
+- Kegunaan: Navigation bar horizontal, vertical card list, alignment dan distribusi ruang yang fleksibel, responsive component sederhana
+
+Grid (layout 2 dimensi):
+- Mengatur elemen dalam baris DAN kolom secara bersamaan
+- Komponen: Grid container (parent) dan grid items (children)
+- Kegunaan: Layout halaman kompleks (header, sidebar, content, footer), photo gallery dengan rows dan columns, dashboard dengan multiple sections, layout dengan overlapping elements
+
+Kapan digunakan?
+- Komponen lebih sederhana, alignment dalam satu arah -> flexbox
+- Struktur layout kompleks yang membutuhkan kontrol 2 dimensi -> grid
 
 ### 5. Step-by-step implementasi checklist tugas 5
+- Menambahkan Tailwind CSS pada project.
+- Mengkonfigurasi static files: Menambahkan `middleware WhiteNoise` dan mengkonfigurasi `STATIC_URL`, `STATICFILES_DIRS`, dan `STATIC_ROOT` di `settings.py`.
+- Membuat file `global.css` di `/static/css/` pada root directory, menambahkan custom, dan menghubungkan `global.css` ke `base.html`.
+- Membuat fungsi `edit_product` di `main/views.py`, membuat file `edit_product.html` dengan styling Tailwind CSS di `main/templates/`, dan menambahkan path `product/<int:id>/edit` di `main/urls.py`.
+- Membuat fungsi `delete_product` di `main/views.py` dan menambahkan path `product/<int:id>/delete` di `main/urls.py`.
+- Menambahkan tombol Edit dan Delete di `card_product.html` dan tombol Delete di `edit_product.html` yang hanya muncul untuk product milik user yang sedang login.
+- Membuat file `navbar.html` yang responsif untuk mobile di `templates/` root directory dengan styling Tailwind CSS untuk tampilan navigation bar, kemudian include di `main.html`.
+- Membuat file `card_product.html` di `main/templates/` untuk tampilan daftar katalog dan include di `main.html`.
+- Menambahkan gambar `no-product.png` di `/static/image/` root directory untuk tampilan belum ada produk.
+- Mengubah tampilan `login.html`, `register.html`, `main.html`, `product_detail.html`, `add_product.html`, `edit_product.html` dengan styling Tailwind CSS.

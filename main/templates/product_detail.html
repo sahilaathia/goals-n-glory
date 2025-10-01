@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block meta %}
-<title>{{ product.name }} - Football Shop</title>
+<title>{{ product }} - Goals n' Glory</title>
 {% endblock meta %}
 
 {% block content %}
@@ -49,11 +49,13 @@
 
             <!-- Product Image -->
             {% if product.thumbnail %}
-                <div class="px-6 sm:px-8">
+            <div class="px-6 sm:px-8">
+                <div class="aspect-square w-full rounded-lg overflow-hidden">
                     <img src="{{ product.thumbnail }}" 
                         alt="{{ product.name }}" 
-                        class="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg">
+                        class="w-full h-full object-cover">
                 </div>
+            </div>
             {% endif %}
 
             <!-- Description -->
