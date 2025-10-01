@@ -152,6 +152,7 @@ Contoh aplikasi yang belum menerapkan: [Deque University Website](https://dequeu
 
 ### 3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
 Urutan dari terluar: Margin -> Border -> Padding.
+
 ![Visualisasi Urutan Margin Border Padding](readme_images/MarginBorderPadding.png)
 - Margin: Ruang transparan di luar elemen yang mengatur jarak dengan elemen lain agar rapi
 - Border: Garis pembatas yang membungkus konten dan padding
