@@ -9,7 +9,7 @@ class Product(models.Model):
         ('gloves', 'Gloves'),
         ('gear', 'Protective Gear'),
         ('training', 'Training Equipment'),
-        ('accessories', 'Accessories'),
+        ('accessories', 'Accessories')
     ]
 
     name = models.CharField(max_length=100)

@@ -11,6 +11,43 @@
 </head>
 
 <body>
-    {% block content %} {% endblock content %}
+    {% block content %}
+    {% endblock content %}
+    {% include 'toast.html' %}
+    {% include 'modal.html' %}
+    <script>
+        const logoutButtons = document.querySelectorAll("#logoutButton, .mobile-logout-button");
+        logoutButtons.forEach(btn => {
+            btn.addEventListener('click', function(e){
+                e.preventDefault();
+                fetch("{% url 'main:logout_ajax' %}", {
+                    method: "POST",
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success'){
+                        showToast('Success', data.message, 'success', 5000);
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url;
+                        }, 1200);
+                    } else {
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Error', data.message, 'error');
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                })
+                .catch(err => {
+                    if (typeof showToast !== 'undefined') {
+                        showToast('Error', 'Logout failed. Please try again.', 'error');
+                    } else {
+                        alert('Logout failed. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -8,75 +8,67 @@
 {% block content %}
 <div class="bg-gray-50 w-full min-h-screen">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Back Navigation -->
+
+        <!-- Back -->
         <div class="mb-6">
-            <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+            <a href="{% url 'main:show_main' %}"
+                class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
                 ← Back to Products
             </a>
         </div>
-        
-        <!-- Product Details -->
-        <article class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            
-            <!-- Header -->
-            <div class="p-6 sm:p-8">
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-cyan-600 text-white">
-                        {{ product.get_category_display }}
-                    </span>
-                    {% if product.is_featured %}
-                        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">
-                            Featured
-                        </span>
-                    {% endif %}
-                </div>
-                
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-2">
-                    {{ product.brand }} {{ product.name }}
-                </h1>
 
-                <div class="text-xl text-gray-800 mb-4">
-                    Rp {{ product.price }}
-                </div>
+        <!-- Loading -->
+        <div id="loading-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+            <svg class="animate-spin h-8 w-8 text-cyan-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 mt-3">Loading product details...</p>
+        </div>
+
+        <!-- Error -->
+        <div id="error-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+            <div class="w-16 h-16 mx-auto mb-4">
+                <div class="text-red-500 text-5xl">⚠️</div>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load product</h3>
+            <p class="text-gray-500">Please try again later.</p>
+        </div>
+
+        <!-- Product Content -->
+        <article id="product-content" class="bg-white rounded-lg border border-gray-200 overflow-hidden hidden">
+
+            <div class="p-6 sm:p-8">
+                <div id="badge-container" class="flex flex-wrap items-center gap-2 mb-4"></div>
+                <h1 id="product-title" class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-2"></h1>
+                <div id="product-price" class="text-xl text-gray-800 mb-4"></div>
 
                 <div class="flex flex-wrap items-center text-sm text-gray-500 gap-4">
-                    <span>Stock: {{ product.stock }}</span>
-                    <span>Size: {{ product.size|default:"N/A" }}</span>
-                    <span>Color: {{ product.color|default:"N/A" }}</span>
+                    <span id="product-stock"></span>
+                    <span id="product-size"></span>
+                    <span id="product-color"></span>
                 </div>
             </div>
 
-            <!-- Product Image -->
-            {% if product.thumbnail %}
-            <div class="px-6 sm:px-8">
+            <div id="product-image-container" class="px-6 sm:px-8 hidden">
                 <div class="aspect-square w-full rounded-lg overflow-hidden">
-                    <img src="{{ product.thumbnail }}" 
-                        alt="{{ product.name }}" 
-                        class="w-full h-full object-cover">
+                    <img id="product-image" src="" alt="" class="w-full h-full object-cover">
                 </div>
             </div>
-            {% endif %}
 
-            <!-- Description -->
             <div class="p-6 sm:p-8">
                 <div class="prose prose-lg max-w-none">
-                    <div class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg">
-                        {{ product.description|default:"No description available." }}
-                    </div>
+                    <div id="product-description"
+                        class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg"></div>
                 </div>
             </div>
 
-            <!-- Seller Info -->
             <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-50">
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="font-medium text-gray-900">
-                            {% if product.user %}
-                                <p>{{ product.user.username }}</p>
-                            {% else %}
-                                <p>Anonymous</p>
-                            {% endif %}
+                            <p id="product-seller">Seller: Loading...</p>
                         </div>
                         <p class="text-sm text-gray-500">Seller</p>
                     </div>
@@ -85,4 +77,78 @@
         </article>
     </div>
 </div>
+
+<script>
+    const PRODUCT_ID = "{{ product.id }}";
+    const PRODUCT_DETAIL_URL = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', PRODUCT_ID);
+
+    // Elements
+    const loading = document.getElementById('loading-state');
+    const error = document.getElementById('error-state');
+    const content = document.getElementById('product-content');
+    const badgeContainer = document.getElementById('badge-container');
+    const title = document.getElementById('product-title');
+    const price = document.getElementById('product-price');
+    const stock = document.getElementById('product-stock');
+    const size = document.getElementById('product-size');
+    const color = document.getElementById('product-color');
+    const desc = document.getElementById('product-description');
+    const imgContainer = document.getElementById('product-image-container');
+    const img = document.getElementById('product-image');
+    const seller = document.getElementById('product-seller');
+
+    function showState(state) {
+        loading.classList.toggle('hidden', state !== 'loading');
+        error.classList.toggle('hidden', state !== 'error');
+        content.classList.toggle('hidden', state !== 'ready');
+    }
+
+    function renderProduct(p) {
+        title.textContent = `${p.brand} ${p.name}`;
+        price.textContent = `Rp ${p.price.toLocaleString("id-ID")}`;
+        stock.textContent = `Stock: ${p.stock > 0 ? p.stock : 'Out of stock'}`;
+        size.textContent = p.size ? `Size: ${p.size}` : '';
+        color.textContent = p.color ? `Color: ${p.color}` : '';
+        desc.textContent = p.description || 'No description available.';
+        seller.textContent = `Seller: ${p.user_username}`;
+
+        // badges
+        badgeContainer.innerHTML = '';
+        const category = document.createElement('span');
+        category.className = 'inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-cyan-600 text-white';
+        category.textContent = p.category_display;
+        badgeContainer.appendChild(category);
+
+        if (p.is_featured) {
+            const feat = document.createElement('span');
+            feat.className = 'inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800';
+            feat.textContent = 'Featured';
+            badgeContainer.appendChild(feat);
+        }
+
+        // image
+        if (p.thumbnail) {
+            img.src = p.thumbnail;
+            img.alt = p.name;
+            imgContainer.classList.remove('hidden');
+        } else {
+            imgContainer.classList.add('hidden');
+        }
+    }
+
+    async function loadProduct() {
+        try {
+            showState('loading');
+            const res = await fetch(PRODUCT_DETAIL_URL);
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            renderProduct(data);
+            showState('ready');
+        } catch (err) {
+            showState('error');
+        }
+    }
+
+    loadProduct();
+</script>
 {% endblock content %}

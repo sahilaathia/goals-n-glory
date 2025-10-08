@@ -14,10 +14,10 @@
                 <a href="/" class="text-gray-600 hover:text-cyan-700 font-medium transition-colors">
                     Home
                 </a>
-                <a href="{% url 'main:add_product' %}"
+                <button onclick="showAddModal()"
                     class="text-gray-600 hover:text-cyan-700 font-medium transition-colors">
-                    Create Product
-                </a>
+                    Add Product
+                </button>
             </div>
 
             <!-- Desktop User Section -->
@@ -27,10 +27,9 @@
                     <div class="text-sm font-medium text-gray-900">{{ name|default:user.username }}</div>
                     <div class="text-xs text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
                 </div>
-                <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
+                <button id="logoutButton" class="text-red-600 hover:text-red-700 font-medium transition-colors">
                     Logout
-                </a>
-                {% else %}
+                </button>                {% else %}
                 <a href="{% url 'main:login' %}"
                     class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
                     Login
@@ -64,10 +63,10 @@
                 <a href="/" class="block text-gray-600 hover:text-cyan-700 font-medium py-3 transition-colors">
                     Home
                 </a>
-                <a href="{% url 'main:add_product' %}"
+                <button onclick="showAddModal()"
                     class="block text-gray-600 hover:text-cyan-700 font-medium py-3 transition-colors">
-                    Create Product
-                </a>
+                    Add Product
+                </button>
             </div>
 
             <!-- Mobile User Section -->
@@ -77,10 +76,9 @@
                     <div class="font-medium text-gray-900">{{ name|default:user.username }}</div>
                     <div class="text-sm text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
                 </div>
-                <a href="{% url 'main:logout' %}"
-                    class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors">
+                <button id="logoutButton" class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors">
                     Logout
-                </a>
+                </button>
                 {% else %}
                 <div class="space-y-3">
                     <a href="{% url 'main:login' %}"
@@ -103,5 +101,35 @@
         btn.addEventListener("click", () => {
             menu.classList.toggle("hidden");
         });
+
+        // const logoutButton = document.getElementById('logoutButton');
+        // if(logoutButton){
+        //     logoutButton.addEventListener('click', function(e){
+        //         e.preventDefault();
+        //         fetch("{% url 'main:logout_ajax' %}", {
+        //             method: "POST",
+        //             headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        //         })
+        //         .then(res => res.json())
+        //         .then(data => {
+        //             if(data.status === 'success'){
+        //                 window.location.href = data.redirect_url;
+        //             } else {
+        //                 if (typeof showToast !== 'undefined') {
+        //                     showToast('Error', data.message, 'error');
+        //                 } else {
+        //                     alert(data.message);
+        //                 }
+        //             }
+        //         })
+        //         .catch(err => {
+        //             if (typeof showToast !== 'undefined') {
+        //                 showToast('Error', 'Logout failed. Please try again.', 'error');
+        //             } else {
+        //                 alert('Logout failed. Please try again.');
+        //             }
+        //         });
+        //     });
+        // }
     </script>
 </nav>

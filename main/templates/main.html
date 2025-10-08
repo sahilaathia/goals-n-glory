@@ -28,6 +28,14 @@
                     class="{% if request.GET.filter == 'my' %} bg-cyan-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-cyan-600 hover:text-white">
                     My Products
                 </a>
+                <!-- Refresh Button -->
+                <button id="refreshProducts" type="button" 
+                    class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors font-medium"
+                    title="Refresh">
+                    <svg id="refreshIcon" class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
             </div>
             {% if user.is_authenticated %}
             <div class="text-sm text-gray-500">
@@ -36,9 +44,25 @@
             {% endif %}
         </div>
 
-        <!-- News Grid -->
-        {% if not product_list %}
-        <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <!-- Products Section -->
+        <!-- Loading State -->
+        <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+            <svg class="animate-spin h-8 w-8 text-cyan-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 mt-3">Loading products...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden text-center text-red-500 font-medium"></div>
+
+        <!-- Product Grid -->
+        <div id="grid" class="hidden"></div>
+
+        <!-- Empty State -->
+        <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
             <div class="w-32 h-32 mx-auto mb-4">
                 <img src="{% static 'image/no-product.png' %}" alt="No products available"
                     class="w-full h-full object-contain">
@@ -47,16 +71,184 @@
             <p class="text-gray-500 mb-6">Add your first product and kickstart your store!</p>
             <a href="{% url 'main:add_product' %}"
                 class="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors">
-                Create News
+                Add Product
             </a>
         </div>
-        {% else %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {% for product in product_list %}
-            {% include 'card_product.html' with product=product %}
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 </div>
+
+<script>
+    const PRODUCTS_API_ENDPOINT = "{% url 'main:show_json' %}";
+    const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+    // DOM elements
+    const loadingSpinner = document.getElementById('loading');
+    const errorMessage = document.getElementById('error');
+    const emptyStateDisplay = document.getElementById('empty');
+    const productGridContainer = document.getElementById('grid');
+    const showAllProductsButton = document.querySelector('a[href="?"]');
+    const showMyProductsButton = document.querySelector('a[href="?filter=my"]');
+
+    let activeFilter = 'all';
+    let allProducts = [];
+
+    // Show/hide page sections
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+        loadingSpinner.classList.toggle('hidden', !showLoading);
+        errorMessage.classList.toggle('hidden', !showError);
+        emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+        productGridContainer.classList.toggle('hidden', !showGrid);
+
+        if (showGrid) {
+            productGridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6';
+        }
+    }
+
+    // Build product card HTML
+    function buildProductCard(product) {
+        const detailLink = `{% url 'main:show_product' 0 %}`.replace('0', product.id);
+        const editLink = `{% url 'main:edit_product' 0 %}`.replace('0', product.id);
+        const deleteLink = `{% url 'main:delete_product' 0 %}`.replace('0', product.id);
+
+        const isOwner = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id);
+
+        const cardHTML = `
+            <article class="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col">
+                <!-- Thumbnail -->
+                <div class="aspect-square relative overflow-hidden">
+                ${product.thumbnail
+                ? `<img src="${product.thumbnail}" alt="${product.name}" class="w-full h-full object-cover">`
+                : `<div class="w-full h-full bg-gray-200"></div>`}
+                <div class="absolute top-3 left-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-cyan-600 text-white">
+                    ${product.category_display || product.category_display}
+                    </span>
+                </div>
+                ${product.is_featured ? `
+                    <div class="absolute top-3 right-3 flex space-x-2">
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">Featured</span>
+                    </div>` : ''}
+                </div>
+
+                <!-- Content + Action Buttons -->
+                <div class="p-4 flex flex-col flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
+                    <a href="${detailLink}" class="hover:text-cyan-600 transition-colors">${product.brand} ${product.name}</a>
+                </h3>
+                <div class="flex flex-col gap-1 mb-2">
+                    <div class="text-lg font-bold text-gray-900">Rp ${product.price.toLocaleString("id-ID")}</div>
+                    <div class="text-sm text-gray-500">
+                    ${product.stock > 0 ? `Stock: ${product.stock}` : `<strong>Out of Stock</strong>`}
+                    ${product.size ? ` | Size: ${product.size}` : ''}
+                    ${product.color ? ` | Color: ${product.color}` : ''}
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-2 border-t border-gray-100 flex justify-between items-center">
+                    <a href="${detailLink}" class="text-cyan-600 hover:text-cyan-700 text-sm font-medium transition-colors">
+                    View Details
+                    </a>
+                    ${isOwner ? `
+                    <div class="flex space-x-2">
+                    <button type="button" 
+                        class="text-gray-600 hover:text-gray-700 text-sm transition-colors"
+                        onclick='showEditModal(${JSON.stringify(product)})'>
+                        Edit
+                    </button>
+                    <button type="button"
+                        class="text-red-600 hover:text-red-700 text-sm transition-colors"
+                        onclick='showDeleteModal(${JSON.stringify(product)})'>
+                        Delete
+                    </button>
+                    </div>` : ''}
+                </div>
+                </div>
+            </article>
+            `;
+        return cardHTML;
+    }
+
+    // Render product cards
+    function renderProducts(products) {
+        productGridContainer.innerHTML = products.map(buildProductCard).join('');
+    }
+
+    // Filter & show products
+    function filterAndDisplayProducts() {
+        const filtered = activeFilter === 'all'
+            ? allProducts
+            : allProducts.filter(p => Number(p.user_id) === Number(CURRENT_USER_ID));
+
+        if (filtered.length === 0) {
+            displayPageSection({ showEmpty: true });
+        } else {
+            renderProducts(filtered);
+            displayPageSection({ showGrid: true });
+        }
+    }
+
+    // Fetch products
+    async function fetchProducts() {
+        try {
+            displayPageSection({ showLoading: true });
+            const response = await fetch(PRODUCTS_API_ENDPOINT);
+            if (!response.ok) throw new Error("Failed to fetch product data");
+            const data = await response.json();
+            allProducts = data;
+            filterAndDisplayProducts();
+        } catch (error) {
+            console.error(error);
+            displayPageSection({ showError: true });
+            errorMessage.textContent = "Error loading products.";
+        }
+    }
+
+    // Button handlers
+    showAllProductsButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        activeFilter = 'all';
+        filterAndDisplayProducts();
+    });
+
+    showMyProductsButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        activeFilter = 'my';
+        filterAndDisplayProducts();
+    });
+
+    fetchProducts();
+
+    // reload product data via AJAX
+    document.addEventListener('productAdded', function () {
+        fetchProducts(); 
+    });
+
+    const refreshButton = document.getElementById('refreshProducts');
+
+    function handleRefreshProductsClick() {
+        if (!refreshButton) return;
+
+        // Tambahkan animasi spin
+        const icon = document.getElementById('refreshIcon');
+        icon.classList.add('animate-spin');
+
+        refreshButton.disabled = true;
+        refreshButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+        if (typeof showToast !== 'undefined') {
+            showToast('Refreshing', 'Fetching the latest product list...', 'normal', 1500);
+        }
+
+        fetchProducts().finally(() => {
+            // Hapus animasi spin
+            icon.classList.remove('animate-spin');
+            refreshButton.disabled = false;
+            refreshButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+    }
+
+    if (refreshButton) { 
+        refreshButton.addEventListener('click', handleRefreshProductsClick);
+    }
+</script>
 {% endblock content %}

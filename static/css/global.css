@@ -45,3 +45,8 @@
     border-color: #0e7490;
     box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.1);
 }
+
+#toast-component.show {
+    opacity: 1;
+    transform: translateY(0);
+}

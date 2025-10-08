@@ -203,3 +203,50 @@ Kapan digunakan?
 - Membuat file `card_product.html` di `main/templates/` untuk tampilan daftar katalog dan include di `main.html`.
 - Menambahkan gambar `no-product.png` di `/static/image/` root directory untuk tampilan belum ada produk.
 - Mengubah tampilan `login.html`, `register.html`, `main.html`, `product_detail.html`, `add_product.html`, `edit_product.html` dengan styling Tailwind CSS.
+
+## Tugas 6
+
+### 1. Apa perbedaan antara synchronous request dan asynchronous request?
+Synchronous Request:
+- Prosesnya berjalan secara berurutan dan blocking.
+- Browser harus menunggu response selesai sebelum melakukan hal lain.
+- Halaman akan reload/refresh sepenuhnya saat ada request.
+- User tidak bisa berinteraksi dengan halaman selama menunggu response.
+
+Asynchronous Request:
+- Prosesnya berjalan di background tanpa blocking.
+- Browser bisa melakukan hal lain sambil menunggu response.
+- Halaman tidak perlu reload, hanya bagian tertentu yang di-update.
+- User tetap bisa berinteraksi dengan halaman selama proses berlangsung.
+
+### 2. Bagaimana AJAX bekerja di Django (alur request–response)?
+- User melakukan aksi yang men-trigger event (klik tombol, submit form, dll).
+- Kode JavaScript mengirim request ke server menggunakan fetch() API.
+- Server menerima request dan memproses di view Django.
+- Django mengirim response dalam format JSON menggunakan JsonResponse().
+- JavaScript menerima response dan memproses data.
+- JavaScript mengupdate tampilan halaman secara dinamis tanpa reload (DOM update).
+
+### 3. Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+- Tidak perlu reload halaman penuh, jadi terasa lebih responsif dan smooth.
+- Hanya data yang diperlukan yang dikirim (JSON), bukan seluruh HTML.
+- Memberikan tampilan fokus pada konten (modal).
+- User tetap bisa berinteraksi dengan halaman saat data dimuat
+- Bisa refresh data spesifik tanpa reload seluruh halaman
+
+### 4. Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+- CSRF Protection: Menggunakan CSRF token
+- Input Sanitization: Menggunakan strip_tags() untuk membersihkan input dari HTML berbahaya
+- Validation di Backend: Selalu validasi data di server, jangan hanya di frontend
+- HTTPS: Pastikan komunikasi terenkripsi, terutama untuk data sensitif seperti password
+- Rate Limiting: Batasi jumlah request untuk mencegah brute force attack
+- Authentication Check: Pastikan user terautentikasi sebelum proses data
+- DOMPurify di Frontend: Sanitasi data saat render di browser untuk lapisan keamanan tambahan
+
+### 5. Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+- Aplikasi terasa lebih cepat dan responsif karena tidak ada full page reload
+- User bisa terus berinteraksi tanpa terganggu loading.
+- Bisa tampilkan loading state, toast notification, atau progress indicator yang lebih informatif
+- Website terasa lebih seperti aplikasi desktop, lebih engaging
+- User tidak kehilangan scroll position atau form data saat update halaman
+- Lebih hemat data dan battery karena transfer data lebih efisien
