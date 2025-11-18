@@ -1,3 +1,5 @@
+import json
+import requests
 import datetime
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -60,11 +62,9 @@ def show_xml(request):
     xml_data = serializers.serialize("xml", product_list)
     return HttpResponse(xml_data, content_type="application/xml")
 
-from django.http import JsonResponse
-from .models import Product
-
 def show_json(request):
     products = Product.objects.all()
+        
     data = [
         {
             'id': str(product.id),
@@ -287,3 +287,85 @@ def logout_ajax(request):
 
         return response
     return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    
+@csrf_exempt
+def add_product_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        name = data.get("name", "")
+        price = data.get("price", 0)
+        description = data.get("description", "")
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        is_featured = bool(data.get("is_featured", False))
+        brand = data.get("brand", "")
+        stock = data.get("stock", 0)
+        size = data.get("size", "")
+        color = data.get("color", "")
+
+        user = request.user if request.user.is_authenticated else None
+
+        new_product = Product(
+            name=name,
+            price=price,
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            is_featured=is_featured,
+            brand=brand,
+            stock=stock,
+            size=size,
+            color=color,
+            user=user
+        )
+        
+        new_product.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+@login_required(login_url='/login')
+def show_json_my(request):    
+    products = Product.objects.filter(user=request.user)
+
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'thumbnail': product.thumbnail,
+            'category': product.category,
+            'category_display': product.get_category_display(),
+            'is_featured': product.is_featured,
+            'brand': product.brand,
+            'size': product.size,
+            'color': product.color,
+            'stock': product.stock,
+            'user_id': product.user.id if product.user else None,
+            'user_username': product.user.username if product.user else 'Anonymous',
+        }
+        for product in products
+    ]
+
+    return JsonResponse(data, safe=False)
